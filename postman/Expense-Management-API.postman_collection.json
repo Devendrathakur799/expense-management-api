@@ -1,0 +1,47 @@
+{
+  "info": {
+    "name": "Expense Management API",
+    "description": "Ready-to-import Postman collection for Expense Management API assessment.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {"key":"baseUrl","value":"http://localhost:5000"},
+    {"key":"userId","value":""},
+    {"key":"expenseId","value":""}
+  ],
+  "item": [
+    {"name":"01 Health Check","item":[{"name":"Health Check","request":{"method":"GET","url":{"raw":"{{baseUrl}}/"}}}]},
+    {"name":"02 Users","item":[
+      {"name":"Create User","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\"\n}"},"url":{"raw":"{{baseUrl}}/api/users"}},"event":[{"listen":"test","script":{"exec":["if (pm.response.code === 201) {","  const json = pm.response.json();","  if (json.data && json.data._id) pm.collectionVariables.set('userId', json.data._id);","}"]}}]},
+      {"name":"Get Users","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/users"}}},
+      {"name":"Get User By ID","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/users/{{userId}}"}}},
+      {"name":"Duplicate Email - Error Test","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"Duplicate User\",\n  \"email\": \"john@example.com\"\n}"},"url":{"raw":"{{baseUrl}}/api/users"}}}
+    ]},
+    {"name":"03 Expenses","item":[
+      {"name":"Create Expense","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"userId\": \"{{userId}}\",\n  \"title\": \"Lunch\",\n  \"amount\": 350,\n  \"category\": \"Food\",\n  \"description\": \"Lunch with friends\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses"}},"event":[{"listen":"test","script":{"exec":["if (pm.response.code === 201) {","  const json = pm.response.json();","  if (json.data && json.data._id) pm.collectionVariables.set('expenseId', json.data._id);","}"]}}]},
+      {"name":"Create Expense 2 - Transport","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"userId\": \"{{userId}}\",\n  \"title\": \"Uber\",\n  \"amount\": 220,\n  \"category\": \"Transport\",\n  \"description\": \"Office travel\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses"}}},
+      {"name":"Create Expense 3 - Food","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"userId\": \"{{userId}}\",\n  \"title\": \"Groceries\",\n  \"amount\": 1200,\n  \"category\": \"Food\",\n  \"description\": \"Monthly groceries\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses"}}},
+      {"name":"Create Expense 4 - Entertainment","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"userId\": \"{{userId}}\",\n  \"title\": \"Movie\",\n  \"amount\": 500,\n  \"category\": \"Entertainment\",\n  \"description\": \"Weekend movie\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses"}}},
+      {"name":"Get All Expenses","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses"}}},
+      {"name":"Get Expense By ID","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses/{{expenseId}}"}}},
+      {"name":"Update Expense","request":{"method":"PUT","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"title\": \"Dinner\",\n  \"amount\": 450,\n  \"category\": \"Food\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses/{{expenseId}}"}}},
+      {"name":"Delete Expense","request":{"method":"DELETE","url":{"raw":"{{baseUrl}}/api/expenses/{{expenseId}}"}}}
+    ]},
+    {"name":"04 Filters & Pagination","item":[
+      {"name":"Pagination Page 1","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses?page=1&limit=2"}}},
+      {"name":"Pagination Page 2","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses?page=2&limit=2"}}},
+      {"name":"Filter By User","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses?userId={{userId}}"}}},
+      {"name":"Filter By Category","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses?category=Food"}}},
+      {"name":"Filter By Date Range","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses?fromDate=2026-01-01&toDate=2026-12-31"}}}
+    ]},
+    {"name":"05 Expense Summary","item":[{"name":"Get Expense Summary","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses/summary"}}}]},
+    {"name":"06 Error Testing","item":[
+      {"name":"Missing Name","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"email\": \"missingname@example.com\"\n}"},"url":{"raw":"{{baseUrl}}/api/users"}}},
+      {"name":"Invalid Email","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"name\": \"Test User\",\n  \"email\": \"wrong-email\"\n}"},"url":{"raw":"{{baseUrl}}/api/users"}}},
+      {"name":"Invalid User ID","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"userId\": \"invalid123\",\n  \"title\": \"Test\",\n  \"amount\": 100,\n  \"category\": \"Food\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses"}}},
+      {"name":"Invalid Amount","request":{"method":"POST","header":[{"key":"Content-Type","value":"application/json"}],"body":{"mode":"raw","raw":"{\n  \"userId\": \"{{userId}}\",\n  \"title\": \"Invalid Amount\",\n  \"amount\": -500,\n  \"category\": \"Food\"\n}"},"url":{"raw":"{{baseUrl}}/api/expenses"}}},
+      {"name":"Expense Not Found","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses/507f1f77bcf86cd799439011"}}},
+      {"name":"Invalid Pagination","request":{"method":"GET","url":{"raw":"{{baseUrl}}/api/expenses?page=0&limit=101"}}}
+    ]}
+  ]
+}
